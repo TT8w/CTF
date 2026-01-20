@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Life Family Emergency Fund Program - Complete Dashboard</title>
+    <style>
+        :root {
+            --color-gold: #D4AF37;
+            --color-navy: #1C3A4D;
+            --color-white: #FFFFFF;
+            --color-gray: #F5F5F5;
+            --color-success: #27AE60;
+            --color-warning: #E74C3C;
+            --color-text: #333333;
+            --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-gray);
+            color: var(--color-text);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--color-navy) 0%, #2d5a7d 100%);
+            color: var(--color-white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--color-gold);
+            white-space: nowrap;
+            margin-right: 20px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--color-gold);
+            color: var(--color-navy);
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0c050;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-white);
+            border: 2px solid var(--color-gold);
+            font-size: 11px;
+            padding: 6px 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-gold);
+            color: var(--color-navy);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--color-white);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--color-gold);
+        }
+
+        .card h3 {
+            color: var(--color-navy);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--color-gold);
+            margin: 8px 0;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-gold) 0%, var(--color-success) 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .leaderboard {
+            background: var(--color-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-size: 13px;
+        }
+
+        .leaderboard-header {
+            background-color: var(--color-navy);
+            color: var(--color-white);
+            padding: 12px;
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 100px;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .leaderboard-row {
+            padding: 12px;
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 100px;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .rank.top3 {
+            background: var(--color-gold);
+            color: var(--color-white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .family-name {
+            font-weight: 600;
+            color: var(--color-navy);
+            font-size: 12px;
+        }
+
+        .savings-amount {
+            color: var(--color-success);
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .badge-pill {
+            background-color: var(--color-gold);
+            color: var(--color-navy);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .form-section {
+            background: var(--color-white);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section h2 {
+            color: var(--color-navy);
+            margin-bottom: 15px;
+            border-bottom: 3px solid var(--color-gold);
+            padding-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--color-navy) 0%, #2d5a7d 100%);
+            color: var(--color-white);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--color-gold);
+        }
+
+        .hero p {
+            font-size: 14px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, var(--color-navy) 0%, #2d5a7d 100%);
+            color: var(--color-white);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--color-gold);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--color-success);
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid var(--color-gold);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 15px;
+            gap: 5px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--color-gold);
+            border-bottom-color: var(--color-gold);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input,
+        .search-box select {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .family-card {
+            background: var(--color-white);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .family-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .family-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .family-name-section h3 {
+            color: var(--color-navy);
+            margin-bottom: 3px;
+            font-size: 13px;
+        }
+
+        .family-info {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .family-demographics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .demographic-item {
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .demographic-label {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+
+        .demographic-value {
+            font-weight: bold;
+            color: var(--color-navy);
+            font-size: 12px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .mini-chart {
+            background: var(--color-white);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-size: 12px;
+        }
+
+        .chart-title {
+            color: var(--color-navy);
+            margin-bottom: 12px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .trend-chart {
+            height: 120px;
+            background: linear-gradient(to right, #f0f0f0 0%, var(--color-gold) 30%, var(--color-success) 100%);
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .export-button {
+            background-color: var(--color-success);
+            color: var(--color-white);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .export-button:hover {
+            background-color: #229954;
+        }
+
+        .risk-alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .risk-high {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 3px solid #c62828;
+        }
+
+        .risk-medium {
+            background-color: #fff3e0;
+            color: #e65100;
+            border-left: 3px solid #e65100;
+        }
+
+        .risk-low {
+            background-color: #f1f8e9;
+            color: #558b2f;
+            border-left: 3px solid #558b2f;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .admin-table th {
+            background-color: var(--color-navy);
+            color: var(--color-white);
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .admin-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table tr:hover {
+            background-color: var(--color-gray);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-inactive {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .workshop-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-gold);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .workshop-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .workshop-card h3 {
+            color: var(--color-navy);
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .workshop-date {
+            color: var(--color-gold);
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 11px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-top: 8px;
+        }
+
+        .badge-completed {
+            background-color: var(--color-navy);
+            color: var(--color-white);
+        }
+
+        .badge-enrolled {
+            background-color: var(--color-success);
+            color: var(--color-white);
+        }
+
+        .reward-system {
+            background: linear-gradient(135deg, #FFD700 0%, var(--color-gold) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: var(--color-navy);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .reward-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .reward-card {
+            background: var(--color-white);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--color-gold);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .reward-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .reward-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--color-navy);
+            margin-bottom: 6px;
+        }
+
+        .reward-points {
+            font-size: 13px;
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .reward-unlocked {
+            background: #e8f5e9;
+            border-color: var(--color-success);
+        }
+
+        .reward-locked {
+            background: #f5f5f5;
+            opacity: 0.6;
+        }
+
+        .points-display {
+            background: var(--color-white);
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--color-gold);
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .clean-separator {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+            margin: 20px 0;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0 20px 0;
+        }
+
+        .section-divider h2 {
+            margin: 0;
+            flex: 1;
+        }
+
+        .section-divider::before {
+            content: '';
+            flex: 0 0 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--color-gold), transparent);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .family-demographics { grid-template-columns: repeat(2, 1fr); }
+            header { flex-direction: column; gap: 10px; }
+            .nav-buttons { flex-direction: column; }
+            button { width: 100%; }
+            .rewards-grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🏅 CTF Life Dashboard</div>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="switchView('judge')">📊 Judge</button>
+            <button class="btn-secondary" onclick="switchView('facilitator')">📋 Facilitator</button>
+            <button class="btn-secondary" onclick="switchView('participant')">🏠 Participant</button>
+            <button class="btn-secondary" onclick="switchView('analytics')">📈 Analytics</button>
+            <button class="btn-secondary" onclick="switchView('families')">👨‍👩‍👧‍👦 Families</button>
+            <button class="btn-secondary" onclick="switchView('admin')">⚙️ Admin</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- JUDGE DASHBOARD -->
+        <div id="judge" class="view active">
+            <div class="hero"><h1>📊 Executive Dashboard</h1><p>Program metrics & impact assessment</p></div>
+            <div class="stats-row">
+                <div class="stat-box"><div class="stat-value">200</div><div class="stat-label">Families</div></div>
+                <div class="stat-box"><div class="stat-value">HK$7.5M</div><div class="stat-label">Total Savings</div></div>
+                <div class="stat-box"><div class="stat-value">30%</div><div class="stat-label">Insurance</div></div>
+                <div class="stat-box"><div class="stat-value">166%</div><div class="stat-label">Year 1 ROI</div></div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card"><h3>Program Cost</h3><div class="metric-label">Investment</div><div class="metric-value">HK$40.6K</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div></div>
+                <div class="card"><h3>Enrollment Rate</h3><div class="metric-label">Target: 200</div><div class="metric-value">100%</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div></div>
+                <div class="card"><h3>Savings Goal</h3><div class="metric-label">HK$6K-10K</div><div class="metric-value">60%</div><div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div></div>
+                <div class="card"><h3>Confidence</h3><div class="metric-label">+40% target</div><div class="metric-value">+45%</div><div class="progress-bar"><div class="progress-fill" style="width: 45%;"></div></div></div>
+                <div class="card"><h3>NPS Score</h3><div class="metric-label">Target ≥40</div><div class="metric-value">52</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div></div>
+                <div class="card"><h3>Year 1 Revenue</h3><div class="metric-label">Insurance</div><div class="metric-value">HK$180K</div><p style="margin-top: 8px; color: var(--color-success); font-weight: bold;">✓ Profitable</p></div>
+            </div>
+            <div class="form-section">
+                <h2>📈 Timeline & Status</h2>
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; font-size: 11px; color: #666;">
+                    <div>✓ Jan: Setup</div><div>✓ Feb 15: W1</div><div>✓ Feb 29: W2</div><div>✓ Mar 15: W3</div><div>✓ Mar 29: W4</div><div>✓ May 31: Decision</div>
+                </div>
+            </div>
+            <div class="alert alert-success">
+                <span>✓</span>
+                <div><strong>GO/NO-GO: APPROVED</strong><br>All criteria met. Proceed with Year 2 scaling.</div>
+            </div>
+        </div>
+
+        <!-- FACILITATOR PANEL -->
+        <div id="facilitator" class="view">
+            <div class="hero"><h1>📋 Facilitator Panel</h1><p>Manage operations & workshops</p></div>
+            <div class="form-section">
+                <h2>📊 Program Statistics</h2>
+                <div class="dashboard-grid">
+                    <div class="card"><h3>Families Recruited</h3><div class="metric-value">200</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div><small>Target: 200</small></div>
+                    <div class="card"><h3>Workshop Completion</h3><div class="metric-value">100%</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div><small>4/4 delivered</small></div>
+                    <div class="card"><h3>Avg Monthly Savings</h3><div class="metric-value">HK$2.5K</div><div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div><small>Target: HK$2-3K</small></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>🏆 Live Leaderboard</h2>
+                <div class="leaderboard">
+                    <div class="leaderboard-header"><div>Rank</div><div>Family</div><div>Saved</div><div>Badge</div></div>
+                    <div class="leaderboard-row"><div class="rank top3">🥇</div><div class="family-name">Family A</div><div class="savings-amount">HK$10.5K</div><div><span class="badge-pill">👑 Crown</span></div></div>
+                    <div class="leaderboard-row"><div class="rank top3">🥈</div><div class="family-name">Family C</div><div class="savings-amount">HK$9.8K</div><div><span class="badge-pill">👑 Crown</span></div></div>
+                    <div class="leaderboard-row"><div class="rank top3">🥉</div><div class="family-name">Family B</div><div class="savings-amount">HK$9.2K</div><div><span class="badge-pill">👑 Crown</span></div></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>📞 Workshops</h2>
+                <div class="workshop-card"><h3>✓ Module 1: Budget Foundations</h3><div class="workshop-date">📅 Feb 15, 2026</div><p>Budget basics & expense tracking</p><span class="badge badge-completed">✓ Completed</span></div>
+                <div class="workshop-card"><h3>✓ Module 2: Emergency Fund Goal-Setting</h3><div class="workshop-date">📅 Feb 29, 2026</div><p>Set HK$6K-10K targets</p><span class="badge badge-completed">✓ Completed</span></div>
+                <div class="workshop-card"><h3>✓ Module 3: Insurance Basics</h3><div class="workshop-date">📅 Mar 15, 2026</div><p>Insurance benefits & enrollment</p><span class="badge badge-completed">✓ Completed</span></div>
+                <div class="workshop-card"><h3>✓ Module 4: Long-term Planning</h3><div class="workshop-date">📅 Mar 29, 2026</div><p>6-month strategy & MPF</p><span class="badge badge-completed">✓ Completed</span></div>
+            </div>
+        </div>
+
+        <!-- PARTICIPANT VIEW -->
+        <div id="participant" class="view">
+            <div class="hero"><h1>🏠 My Emergency Fund Journey</h1><p>Track progress & achievements</p></div>
+
+            <!-- DAILY REWARDS SYSTEM -->
+            <div class="reward-system">
+                <div class="reward-title">🎁 Daily Rewards & Achievements</div>
+                <div class="points-display">💰 Total Points: 2,450 | Tier: Silver ⭐</div>
+                <div class="rewards-grid">
+                    <div class="reward-card reward-unlocked" onclick="alert('✓ Daily Check-in: Completed Today! +10 Points')">
+                        <div class="reward-icon">✅</div>
+                        <div class="reward-name">Daily Check-in</div>
+                        <div class="reward-points">+10 pts</div>
+                    </div>
+                    <div class="reward-card reward-unlocked" onclick="alert('✓ Savings Milestone: HK$1K Saved! +50 Points')">
+                        <div class="reward-icon">🎯</div>
+                        <div class="reward-name">Hit Target</div>
+                        <div class="reward-points">+50 pts</div>
+                    </div>
+                    <div class="reward-card reward-unlocked" onclick="alert('✓ Workshop Attended! +30 Points')">
+                        <div class="reward-icon">📚</div>
+                        <div class="reward-name">Workshop</div>
+                        <div class="reward-points">+30 pts</div>
+                    </div>
+                    <div class="reward-card reward-unlocked" onclick="alert('✓ Insurance Enrolled! +100 Points')">
+                        <div class="reward-icon">🛡️</div>
+                        <div class="reward-name">Insurance</div>
+                        <div class="reward-points">+100 pts</div>
+                    </div>
+                    <div class="reward-card reward-unlocked" onclick="alert('✓ Referral Bonus: Friend Joined! +75 Points')">
+                        <div class="reward-icon">👥</div>
+                        <div class="reward-name">Referral</div>
+                        <div class="reward-points">+75 pts</div>
+                    </div>
+                    <div class="reward-card reward-locked" onclick="alert('🔒 Streak 7 Days: Keep going! (0/7 days)')">
+                        <div class="reward-icon">🔥</div>
+                        <div class="reward-name">7-Day Streak</div>
+                        <div class="reward-points">+150 pts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clean-separator"></div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'psavings')">💰 Savings</button>
+                <button class="tab" onclick="switchTab(event, 'pworkshops')">📚 Workshops</button>
+                <button class="tab" onclick="switchTab(event, 'pinsurance')">🛡️ Insurance</button>
+                <button class="tab" onclick="switchTab(event, 'pleaderboard')">🏆 Leaderboard</button>
+            </div>
+
+            <div id="psavings" class="tab-content active">
+                <div class="form-section">
+                    <div class="section-divider"><h2>Your Savings Progress</h2></div>
+                    <div class="stats-row">
+                        <div class="stat-box"><div class="stat-value">HK$7.5K</div><div class="stat-label">Total Saved (3 months)</div></div>
+                        <div class="stat-box"><div class="stat-value">18%</div><div class="stat-label">Savings Rate</div></div>
+                        <div class="stat-box"><div class="stat-value">HK$2.5K</div><div class="stat-label">Avg Monthly</div></div>
+                    </div>
+                    <h3 style="color: var(--color-navy); margin: 15px 0 10px 0; font-size: 14px;">🏅 Achievement Badges</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                        <div style="padding: 12px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-radius: 8px; text-align: center; border: 2px solid var(--color-success);">
+                            <div style="font-size: 24px; margin-bottom: 5px;">🌱</div>
+                            <div style="font-weight: bold; color: var(--color-navy); font-size: 12px;">Seedling</div>
+                            <div style="font-size: 10px; color: #666; margin-top: 3px;">HK$2K Saved</div>
+                        </div>
+                        <div style="padding: 12px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-radius: 8px; text-align: center; border: 2px solid var(--color-success);">
+                            <div style="font-size: 24px; margin-bottom: 5px;">🌳</div>
+                            <div style="font-weight: bold; color: var(--color-navy); font-size: 12px;">Tree</div>
+                            <div style="font-size: 10px; color: #666; margin-top: 3px;">HK$6K Saved</div>
+                        </div>
+                        <div style="padding: 12px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 8px; text-align: center; border: 2px solid var(--color-warning);">
+                            <div style="font-size: 24px; margin-bottom: 5px;">👑</div>
+                            <div style="font-weight: bold; color: var(--color-navy); font-size: 12px;">Crown</div>
+                            <div style="font-size: 10px; color: #666; margin-top: 3px;">75% to HK$10K</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pworkshops" class="tab-content">
+                <div class="form-section">
+                    <div class="section-divider"><h2>Workshop Progress</h2></div>
+                    <div class="workshop-card"><h3>✓ Module 1: Budget Foundations</h3><span class="badge badge-completed">✓ Attended</span></div>
+                    <div class="workshop-card"><h3>✓ Module 2: Goal-Setting</h3><span class="badge badge-completed">✓ Attended</span></div>
+                    <div class="workshop-card"><h3>✓ Module 3: Insurance Basics</h3><span class="badge badge-completed">✓ Attended</span><span class="badge badge-enrolled">💳 Enrolled</span></div>
+                    <div class="workshop-card"><h3>✓ Module 4: Long-term Planning</h3><span class="badge badge-completed">✓ Attended</span></div>
+                </div>
+            </div>
+
+            <div id="pinsurance" class="tab-content">
+                <div class="form-section">
+                    <div class="section-divider"><h2>🛡️ Insurance Protection</h2></div>
+                    <div class="alert alert-success"><span>✓</span><div><strong>You're Protected!</strong><br>CTF Life Starter Plan active with 50% discount (3 months remaining).</div></div>
+                    <div style="background: linear-gradient(135deg, var(--color-gold) 0%, #e0c050 100%); border-radius: 10px; padding: 15px; margin-bottom: 12px; font-size: 12px; color: var(--color-navy);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div style="background: var(--color-white); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #999; margin-bottom: 5px;">PLAN TYPE</div>
+                                <div style="font-weight: bold; font-size: 14px;">CTF Starter</div>
+                            </div>
+                            <div style="background: var(--color-white); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #999; margin-bottom: 5px;">MONTHLY PREMIUM</div>
+                                <div style="font-weight: bold; font-size: 14px;">HK$49.50</div>
+                                <div style="font-size: 10px; color: var(--color-success); margin-top: 3px;">50% OFF ✓</div>
+                            </div>
+                            <div style="background: var(--color-white); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #999; margin-bottom: 5px;">COVERAGE</div>
+                                <div style="font-weight: bold; font-size: 14px;">Critical Illness</div>
+                            </div>
+                            <div style="background: var(--color-white); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #999; margin-bottom: 5px;">STATUS</div>
+                                <div style="font-weight: bold; font-size: 14px; color: var(--color-success);">✓ Active</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pleaderboard" class="tab-content">
+                <div class="form-section">
+                    <div class="section-divider"><h2>🏆 Neighborhood Leaderboard</h2></div>
+                    <div class="leaderboard">
+                        <div class="leaderboard-header"><div>Rank</div><div>Status</div><div>Savings</div><div>Badge</div></div>
+                        <div class="leaderboard-row" style="background-color: rgba(212, 175, 55, 0.1);"><div class="rank top3" style="font-size: 14px;">🥇</div><div style="font-weight: bold; color: var(--color-navy);">You're #1!</div><div class="savings-amount">HK$7.5K</div><div><span class="badge-pill">👑 Crown</span></div></div>
+                        <div class="leaderboard-row"><div>2</div><div>Family B</div><div class="savings-amount">HK$6.2K</div><div><span class="badge-pill">🌳 Tree</span></div></div>
+                        <div class="leaderboard-row"><div>3</div><div>Family C</div><div class="savings-amount">HK$5.8K</div><div><span class="badge-pill">🌳 Tree</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED ANALYTICS -->
+        <div id="analytics" class="view">
+            <div class="hero"><h1>📈 Advanced Analytics</h1><p>Deep insights & Year 2 projections</p></div>
+            <div class="chart-grid">
+                <div class="mini-chart">
+                    <div class="chart-title">💰 3-Month Savings Trend</div>
+                    <div class="trend-chart"></div>
+                    <p style="margin-top: 8px; font-size: 11px; color: #666;">15% month-over-month growth. On track for HK$7.5M ✓</p>
+                </div>
+                <div class="mini-chart">
+                    <div class="chart-title">🗺️ Regional Comparison</div>
+                    <div style="margin-top: 10px; font-size: 11px;">
+                        <div style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Kwai Tsing</span><span style="color: var(--color-gold); font-weight: bold;">HK$1.8M</span></div>
+                            <div style="background: #e0e0e0; height: 6px; border-radius: 3px;"><div style="width: 90%; height: 100%; background: var(--color-gold);"></div></div>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Mong Kok</span><span style="color: var(--color-gold); font-weight: bold;">HK$1.5M</span></div>
+                            <div style="background: #e0e0e0; height: 6px; border-radius: 3px;"><div style="width: 75%; height: 100%; background: var(--color-gold);"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-chart">
+                    <div class="chart-title">👥 Demographics</div>
+                    <div style="margin-top: 10px; font-size: 11px;">
+                        <div style="margin-bottom: 8px;"><strong>Age 30-40:</strong> 35% | Avg HK$8.2K 📈</div>
+                        <div style="margin-bottom: 8px;"><strong>Age 40-50:</strong> 45% | Avg HK$6.8K</div>
+                        <div><strong>Age 50+:</strong> 20% | Avg HK$5.5K</div>
+                    </div>
+                </div>
+                <div class="mini-chart">
+                    <div class="chart-title">⚠️ Risk Assessment</div>
+                    <div style="margin-top: 10px;">
+                        <div class="risk-alert risk-low"><strong>LOW:</strong> 120 families on track (60%)</div>
+                        <div class="risk-alert risk-medium"><strong>MEDIUM:</strong> 50 families (25%)</div>
+                        <div class="risk-alert risk-high"><strong>HIGH:</strong> 30 families (15%)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>📊 Year 1 → Year 2 Projections</h2>
+                <div class="dashboard-grid">
+                    <div class="card"><h3>Year 2 Growth</h3><div class="metric-value">1,000</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div><small>5x expansion</small></div>
+                    <div class="card"><h3>Year 2 Revenue</h3><div class="metric-value">HK$1.8M</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div><small>10x increase</small></div>
+                    <div class="card"><h3>Year 2 ROI</h3><div class="metric-value">620%</div><div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div><small>4x better</small></div>
+                </div>
+                <button class="export-button" onclick="alert('📊 Exporting PDF...')">📄 Export Report</button>
+                <button class="export-button" onclick="alert('📊 Exporting CSV...')">📋 Export Data</button>
+            </div>
+        </div>
+
+        <!-- FAMILY PROFILES -->
+        <div id="families" class="view">
+            <div class="hero"><h1>👨‍👩‍👧‍👦 Family Profiles</h1><p>Search & manage family records</p></div>
+            <div class="form-section">
+                <h2>🔍 Search Families</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchFamilies()">
+                    <select onchange="filterByStatus(this.value)">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="At Risk">At Risk</option>
+                    </select>
+                    <button class="export-button" onclick="exportData()">📥 Export CSV</button>
+                </div>
+            </div>
+            <div id="familyList"></div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="admin" class="view">
+            <div class="hero"><h1>⚙️ Admin Control Panel</h1><p>System management & monitoring</p></div>
+            <div class="form-section">
+                <h2>👔 Life Planner Management</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Planner</th><th>Assigned</th><th>Avg Savings</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Sarah Lee</td><td>40</td><td>HK$7.8K</td><td><span class="status-badge status-active">Active</span></td></tr>
+                            <tr><td>Michael Yip</td><td>45</td><td>HK$7.2K</td><td><span class="status-badge status-active">Active</span></td></tr>
+                            <tr><td>Jessica Ng</td><td>38</td><td>HK$6.9K</td><td><span class="status-badge status-active">Active</span></td></tr>
+                            <tr><td>David Wong</td><td>42</td><td>HK$8.1K</td><td><span class="status-badge status-active">Active</span></td></tr>
+                            <tr><td>Emily Choi</td><td>35</td><td>HK$7.5K</td><td><span class="status-badge status-active">Active</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>📞 Communication Log</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Date</th><th>Type</th><th>Recipients</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Jan 18</td><td>WhatsApp</td><td>All 200 Families</td><td><span class="status-badge status-active">Sent ✓</span></td></tr>
+                            <tr><td>Jan 15</td><td>Email</td><td>At-Risk Group</td><td><span class="status-badge status-active">Sent ✓</span></td></tr>
+                            <tr><td>Jan 12</td><td>SMS</td><td>Top 10</td><td><span class="status-badge status-active">Sent ✓</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>📋 Audit Log</h2>
+                <div style="background: var(--color-gray); border-radius: 6px; padding: 10px; max-height: 180px; overflow-y: auto; font-family: monospace; font-size: 10px;">
+                    <div>[2026-01-20 18:30] Data export (CSV) initiated</div>
+                    <div>[2026-01-20 18:25] Family status updated</div>
+                    <div>[2026-01-20 18:15] Database backup completed</div>
+                    <div>[2026-01-20 17:45] Message sent to 200 families</div>
+                    <div>[2026-01-20 17:30] New participant: Ho Family</div>
+                    <div>[2026-01-20 16:50] Insurance enrollment processed</div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>💾 Database</h2>
+                <button class="btn-primary" onclick="alert('✓ Backup initiated')">💾 Backup</button>
+                <button class="btn-primary" onclick="alert('✓ Health check: 100% OK')">🔍 Health Check</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const familiesData = [
+            { id: 1, name: 'Chan Family', location: 'Kwai Tsing', income: 15000, occupation: 'Retail Worker', savings: 7500, insurance: true, status: 'Active', planner: 'Sarah Lee', risk: 'low' },
+            { id: 2, name: 'Wong Family', location: 'Sham Shui Po', income: 12000, occupation: 'Cleaner', savings: 6200, insurance: true, status: 'Active', planner: 'Michael Yip', risk: 'medium' },
+            { id: 3, name: 'Lam Family', location: 'Kwai Tsing', income: 18000, occupation: 'Delivery Driver', savings: 9200, insurance: true, status: 'Active', planner: 'Sarah Lee', risk: 'low' },
+            { id: 4, name: 'Lee Family', location: 'Mong Kok', income: 11000, occupation: 'Caregiver', savings: 4500, insurance: false, status: 'At Risk', planner: 'Jessica Ng', risk: 'high' },
+            { id: 5, name: 'Ho Family', location: 'Shau Kei Wan', income: 16000, occupation: 'Chef', savings: 8500, insurance: true, status: 'Active', planner: 'Michael Yip', risk: 'low' }
+        ];
+
+        function switchView(name) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(name).classList.add('active');
+        }
+
+        function switchTab(e, name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(name).classList.add('active');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+
+        function searchFamilies() {
+            const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const list = document.getElementById('familyList');
+            if (!list) return;
+            list.innerHTML = familiesData.filter(f => f.name.toLowerCase().includes(q) || f.location.toLowerCase().includes(q)).map(f => `
+                <div class="family-card" onclick="openFamilyProfile(${f.id})">
+                    <div class="family-header">
+                        <div class="family-name-section"><h3>${f.name}</h3><div class="family-info">📍 ${f.location} | 💼 ${f.occupation}</div></div>
+                        <span class="status-badge ${f.status === 'Active' ? 'status-active' : 'status-inactive'}">${f.status}</span>
+                    </div>
+                    <div class="family-demographics">
+                        <div class="demographic-item"><div class="demographic-label">Income</div><div class="demographic-value">HK$${f.income.toLocaleString()}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Savings</div><div class="demographic-value">HK$${f.savings.toLocaleString()}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Planner</div><div class="demographic-value">${f.planner}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Risk</div><div class="demographic-value" style="color: ${f.risk === 'high' ? '#c62828' : f.risk === 'medium' ? '#e65100' : '#2e7d32'}">${f.risk.toUpperCase()}</div></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByStatus(status) {
+            const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const list = document.getElementById('familyList');
+            if (!list) return;
+            list.innerHTML = familiesData.filter(f => (status === '' || f.status === status) && (f.name.toLowerCase().includes(q) || f.location.toLowerCase().includes(q))).map(f => `
+                <div class="family-card" onclick="openFamilyProfile(${f.id})">
+                    <div class="family-header">
+                        <div class="family-name-section"><h3>${f.name}</h3><div class="family-info">📍 ${f.location} | 💼 ${f.occupation}</div></div>
+                        <span class="status-badge ${f.status === 'Active' ? 'status-active' : 'status-inactive'}">${f.status}</span>
+                    </div>
+                    <div class="family-demographics">
+                        <div class="demographic-item"><div class="demographic-label">Income</div><div class="demographic-value">HK$${f.income.toLocaleString()}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Savings</div><div class="demographic-value">HK$${f.savings.toLocaleString()}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Planner</div><div class="demographic-value">${f.planner}</div></div>
+                        <div class="demographic-item"><div class="demographic-label">Risk</div><div class="demographic-value" style="color: ${f.risk === 'high' ? '#c62828' : f.risk === 'medium' ? '#e65100' : '#2e7d32'}">${f.risk.toUpperCase()}</div></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openFamilyProfile(id) {
+            const f = familiesData.find(x => x.id === id);
+            alert(`${f.name}\nLocation: ${f.location}\nOccupation: ${f.occupation}\nIncome: HK$${f.income}\nSavings: HK$${f.savings}\nPlanner: ${f.planner}`);
+        }
+
+        function exportData() {
+            let csv = 'Family Name,Location,Income,Savings,Insurance,Status,Risk\n';
+            familiesData.forEach(f => {
+                csv += `${f.name},${f.location},${f.income},${f.savings},${f.insurance ? 'Yes' : 'No'},${f.status},${f.risk}\n`;
+            });
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            link.download = 'CTF_Families_Data.csv';
+            link.click();
+        }
+
+        window.onload = () => { searchFamilies(); console.log('✓ CTF Life Dashboard Ready'); };
+    </script>
+</body>
+</html>
